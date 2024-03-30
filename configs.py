@@ -115,7 +115,7 @@ def get_args_parser():
     parser.add_argument('--pin_mem', type=bool, default=True,
                         help='Pin CPU memory in DataLoader for more efficient (sometimes) transfer to GPU.')
     parser.add_argument('--auto_resume', type=bool, default=True)
-    parser.add_argument('--resume', default='',
+    parser.add_argument('--resume', default='/Users/hungphan/PBL5/checkpoints/checkpoint-40-87.pth',
                         help='resume from checkpoint')
     parser.add_argument('--save_ckpt', type=bool, default=True)
     parser.add_argument('--save_ckpt_freq', default=1, type=int)

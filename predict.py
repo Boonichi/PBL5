@@ -89,3 +89,5 @@ for index, model in enumerate(models):
     acc = accuracy_score(outputs, actuals)
     print(acc)
 
+
+

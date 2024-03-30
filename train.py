@@ -57,7 +57,7 @@ def main(args):
     else:
         valset, _ = build_dataset(args, is_train = False)
     
-    num_tasks = utils.get_world_size()
+    num_tasks = utils.get_world_size()  
     global_rank = utils.get_rank()
 
     sampler_train = torch.utils.data.DistributedSampler(
