@@ -1,0 +1,16 @@
+apex==0.9.10.dev0
+matplotlib==3.5.3
+numba==0.56.3
+numpy==1.23.5
+opencv_python_headless==4.7.0.72
+pandas==1.4.4
+Pillow==9.5.0
+pytorch_lightning==1.9.0
+scikit_learn==1.2.2
+scipy==1.9.1
+tensorflow_macos==2.9.0
+timm==0.6.13
+torch==1.13.1
+torchmetrics
+torchvision
+tqdm==4.62.3
