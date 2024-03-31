@@ -109,13 +109,13 @@ def get_args_parser():
                         help='path where to tensorboard log')
     parser.add_argument('--disable_eval', type=bool, default=False,
                         help='Disabling evaluation during training')
-    parser.add_argument('--device', default='mps',
+    parser.add_argument('--device', default='cpu',
                         help='device to use for training / testing')
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--pin_mem', type=bool, default=True,
                         help='Pin CPU memory in DataLoader for more efficient (sometimes) transfer to GPU.')
     parser.add_argument('--auto_resume', type=bool, default=True)
-    parser.add_argument('--resume', default='/Users/hungphan/PBL5/checkpoints/checkpoint-40-87.pth',
+    parser.add_argument('--resume', default='/checkpoints/checkpoint-40-87.pth',
                         help='resume from checkpoint')
     parser.add_argument('--save_ckpt', type=bool, default=True)
     parser.add_argument('--save_ckpt_freq', default=1, type=int)

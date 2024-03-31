@@ -14,3 +14,6 @@ torch==1.13.1
 torchmetrics
 torchvision
 tqdm==4.62.3
+python-multipart
+uvicorn
+fastapi
