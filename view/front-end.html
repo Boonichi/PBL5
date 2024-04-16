@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medicinal Plant Prediction</title>
+    <style>
+      /* CSS để tạo giao diện  */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #d0f0c0; /* Màu xanh lá cây */
+        background-image: url("https://cdn.pixabay.com/photo/2016/04/01/10/51/green-1300055_1280.png"),
+          url("https://img3.thuthuatphanmem.vn/uploads/2019/06/08/hinh-nen-la-cay-cho-powerpoint_125620721.jpg"),
+          url("https://www.thuocdantoc.org/wp-content/uploads/2019/10/la-cay-bo-de.jpg"); /* Thêm hình ảnh lá cây làm trang trí */
+        background-repeat: no-repeat, no-repeat, no-repeat;
+        background-position: 50% 10%, 70% 20%, 30% 80%; /* Vị trí của hình ảnh lá cây */
+        background-size: 100px, 70px, 90px; /* Kích thước của hình ảnh lá cây */
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #007bff;
+      }
+      .form-group {
+        margin-bottom: 30px;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #555555;
+      }
+      input[type="file"] {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      #imagePreview {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      #imagePreview img {
+        max-width: 100%;
+        max-height: 200px; /* Giới hạn chiều cao để tránh làm xấu giao diện */
+      }
+      button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #result {
+        margin-top: 20px;
+        font-weight: bold;
+        color: #555555;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+      }
+      th,
+      td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Medicinal Plant Prediction</h1>
+      <div class="form-group">
+        <label for="image">Upload an image of the plant:</label>
+        <input type="file" id="image" accept="image/*" />
+      </div>
+      <div id="imagePreview"></div>
+      <button onclick="predict()">Predict</button>
+      <div id="result"></div>
+      <!-- Bảng hiển thị thông tin loại lá cây được dự đoán và công dụng -->
+      <table id="predictionTable" style="display: none">
+        <thead>
+          <tr>
+            <th>Predicted Plant</th>
+            <th>Uses</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script>
+      // JavaScript để xử lý logic và giao tiếp với model AI
+      function predict() {
+        var input = document.getElementById("image").files[0];
+        var formData = new FormData();
+        formData.append("image", input);
+
+        // Gửi request đến server để dự đoán loại cây thuốc
+        fetch("http://localhost:8000/classify", {
+          // Thay 'http://localhost:8000' bằng địa chỉ thực tế của server API của bạn
+          mode: "no-cors",
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Hiển thị kết quả dự đoán
+            document.getElementById("result").innerText =
+              "Predicted plant: " + data.medical_leaf_name;
+
+            // Hiển thị bảng thông tin loại lá cây được dự đoán và công dụng
+            var table = document.getElementById("predictionTable");
+            table.style.display = "block"; // Hiển thị bảng
+
+            var tbody = table.querySelector("tbody");
+            tbody.innerHTML = ""; // Xóa nội dung cũ
+
+            // Thêm thông tin loại lá cây và công dụng vào bảng
+            var plantPrediction = data.medical_leaf_name;
+            var uses = getUses(plantPrediction); // Hàm getUses() để lấy thông tin công dụng dựa trên tên loại lá cây
+
+            var row =
+              "<tr><td>" + plantPrediction + "</td><td>" + uses + "</td></tr>";
+            tbody.innerHTML += row;
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      // Hàm giả định để lấy thông tin công dụng dựa trên tên loại lá cây
+      function getUses(plantName) {
+        var uses = "";
+        switch (plantName) {
+          case "Alpinia Galanga":
+            uses =
+              "Điều trị đầy bụng, tiêu chảy, buồn nôn do ăn uống khó tiêu, Giúp giã rượu, Điều trị nhiễm khuẩn, uốn ván";
+            break;
+          case "Amaranthus Viridis":
+            uses =
+              " Được sử dụng phổ biến làm rau ăn, có tác dụng thanh nhiệt, lợi tiểu, sát trùng, trị độc, điều trị ong đốt, mụn nhọt ";
+            break;
+          case "Artocarpus Heterophyllus":
+            uses =
+              " Có tác dụng trợ phế khí, trừ chứng âm nhiệt, giải độc, giảm đau ";
+            break;
+          case "Azadirachta Indica":
+            uses =
+              " Có tác dụng chống oxy hóa và làm dịu da, đồng thời có thể giúp giảm số lượng vi khuẩn có hại trên bề mặt da ";
+            break;
+          case "Basella Alba":
+            uses =
+              " Dồi dào vitamin và khoáng chất. Nổi bật nhất là hàm lượng sắt, canxi, vitamin A, C và các vitamin nhóm B. ";
+            break;
+          case "Brassica Juncea":
+            uses =
+              " Dùng chữa ho hen, làm tan khí trệ, chữa kết hạch, đơn độc sưng tấy. ";
+            break;
+          case "Carissa Carandas":
+            uses = " Chữa giun sán, thuốc làm se, kiện vị, lợi mật ";
+            break;
+          case "Citrus Limon":
+            uses = " Chữa ho có đờm, Chữa ho khan, mất tiếng: ";
+            break;
+          case "Ficus Auriculata":
+            uses =
+              " chữa táo bón, chữa tỳ hư, chữa tiêu chảy lâu ngày, tiêu hóa kém, sưng họng, đau họng, làm tăng tiết sữa mẹ, chữa cảm hay ngộ độc. ";
+            break;
+          case "Ficus Religiosa":
+            uses =
+              " Thanh lọc không khí, bảo vệ môi trường, cây có giá trị kinh tế.";
+            break;
+          case "Hibiscus Rosa-sinensis":
+            uses =
+              " Chữa viêm tuyến mang tai, viêm kết mạc cấp; viêm khí quản, viêm đường tiết niệu, viêm cổ tử cung";
+            break;
+          case "Jasminum":
+            uses =
+              " Sử dụng để cải thiện tâm trạng, giảm căng thẳng và lo âu, điều hòa nhiệt và làm mát cơ thể.";
+            break;
+          case "Mangifera Indica":
+            uses =
+              "  Làm thuốc chữa bệnh ngoài da, chữa ho, viêm phế quản mạn tính.";
+            break;
+          case "Mentha":
+            uses =
+              " Làm dịu và làm mát, kháng khuẩn và chống vi khuẩn, khít lỗ chân lông.";
+            break;
+          case "Moringa Oleifera":
+            uses = " Làm giảm lượng đường trong máu,giảm cholesteron.";
+            break;
+          case "Muntingia Calabura":
+            uses =
+              " Làm chất khử trùng và điều trị chứng chuột rút ở vùng bụng,àm thuốc chống co giật, trị nhức đầu còn lá được dùng chữa các bệnh về gan.";
+            break;
+          case "Murraya Koenigii":
+            uses =
+              " Được sử dụng làm gia vị và làm thuốc,để trị lỵ, tiêu chảy và sốt rét, phát ban, hạ sốt, rắn cắn.";
+            break;
+          case "Nerium Oleander":
+            uses =
+              " Điều trị sung huyết, cũng như được sử dụng cục bộ để điều trị các rối loạn da";
+            break;
+          case "Nyctanthes Arbor-tristis":
+            uses = " Điều trị phong thấp, sốt rét, đau dây thần kinh hông";
+            break;
+          case "Ocimum Tenuiflorum":
+            uses =
+              " Điều trị ho bệnh viêm phế quản, sử dụng chiết xuất cồn cho loét dạ dày và bệnh về mắt.Điều trị vết cắn của côn trùng.";
+            break;
+          case "Piper Betle ":
+            uses =
+              " Khắc phục tình trạng đầy hơi, khó tiêu, chữa chứng hôi miệng.";
+            break;
+          case "Plectranthus Amboinicus ":
+            uses =
+              " chữa cảm, cúm, sốt cao, sốt không ra mồ hôi được, viêm phế quản, ho, hen, ho ra máu, viêm họng, khản tiếng, nôn ra máu, chảy máu cam.";
+            break;
+          case "Pongamia Pinnata ":
+            uses =
+              " Sản xuất dầu Pongamia (dầu kè), cải thiện đất và kiểm soát xói mòn, sử dụng trong chăm sóc da và tóc.";
+            break;
+          case "Psidium Guajava ":
+            uses =
+              "Chữa viêm ruột cấp, tiêu chảy, kiết lỵ, trẻ em ăn uống không tiêu,  rửa vết lở loét. ";
+            break;
+          case "Punica Granatum ":
+            uses = "Làm thuốc chữa sán, làm mực viết ";
+            break;
+          case "Santalum Album ":
+            uses =
+              "Sản xuất dầu đàn hương, dùng làm chất kích thích và thư giãn. ";
+            break;
+          case "Syzygium Cumini ":
+            uses =
+              "Sử dụng trong điều trị tiểu đường, chống vi khuẩn và kháng viêm, hỗ trợ tiêu hóa ";
+            break;
+          case "Syzygium Jambos ":
+            uses =
+              "Chữa tiểu đường,được dùng làm thuốc trị bệnh đường hô hấp, chữa đau mắt đỏ. ";
+            break;
+          case "Tabernaemontana Divaricata ":
+            uses =
+              "Chống viêm, nhiễm trùng, giảm đau, điều trị ung bứu, đau mắt, bệnh ngoài da, huyết áp, lợi tiểu. ";
+            break;
+          case "Trigonella Foenum-graecum ":
+            uses = "Thuốc bổ thận, lợi sữa, đau dạ dày, ruột, bệnh ngoài da  ";
+            break;
+          // Thêm các trường hợp khác tương tự tại đây
+          default:
+            uses = "Unknown";
+        }
+        return uses;
+      }
+
+      // JavaScript để hiển thị tấm ảnh khi tải lên
+      document.getElementById("image").addEventListener("change", function () {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("imagePreview").innerHTML =
+            '<img src="' + e.target.result + '" alt="Uploaded Image">';
+        };
+        reader.readAsDataURL(this.files[0]);
+      });
+    </script>
+  </body>
+</html>

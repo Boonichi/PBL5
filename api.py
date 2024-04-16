@@ -15,6 +15,7 @@ from typing import List
 from configs import get_args_parser
 import os
 
+
 class ReturnedObject(BaseModel):
     medical_leaf_name: str
 
@@ -23,10 +24,14 @@ IMAGE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 
 # Đường dẫn tới thư mục public
 public_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "public")
+
+
 class AppAPI:
     def __init__(self, args: dict) -> None:
         self.app = FastAPI()
-        self.app.mount("/dataset/fold_0", StaticFiles(directory=IMAGE_DIR), name="images")
+        self.app.mount(
+            "/dataset/fold_0", StaticFiles(directory=IMAGE_DIR), name="images"
+        )
         self.predictor = ModelPredictor(args)
 
         self.app.add_middleware(
@@ -42,9 +47,8 @@ class AppAPI:
             return {"message": "hello"}
 
         @self.app.post("/classify", response_model=ReturnedObject)
-        async def classify(
-            image_file: UploadFile = None
-        ): 
+        async def classify(image_file: UploadFile = None):
+            print(image_file)
             request_object_content = await image_file.read()
             image = Image.open(io.BytesIO(request_object_content))
             output = self.predictor.predict(image)
