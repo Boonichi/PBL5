@@ -5,7 +5,7 @@ import uvicorn
 import requests
 import argparse
 import pandas as pd
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -47,7 +47,7 @@ class AppAPI:
             return {"message": "hello"}
 
         @self.app.post("/classify", response_model=ReturnedObject)
-        async def classify(image_file: UploadFile = None):
+        async def classify(image_file: UploadFile = File(...)):
             print(image_file)
             request_object_content = await image_file.read()
             image = Image.open(io.BytesIO(request_object_content))

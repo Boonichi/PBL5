@@ -114,17 +114,17 @@
     <script>
       // JavaScript để xử lý logic và giao tiếp với model AI
       function predict() {
-        var input = document.getElementById("image").files[0];
-        var formData = new FormData();
-        formData.append("image", input);
-
-        // Gửi request đến server để dự đoán loại cây thuốc
-        fetch("http://localhost:8000/classify", {
-          // Thay 'http://localhost:8000' bằng địa chỉ thực tế của server API của bạn
-          mode: "no-cors",
-          method: "POST",
-          body: formData,
-        })
+          var input = document.getElementById("image").files[0];
+          if (input) {
+            var formData = new FormData();
+            formData.append("image_file", input);
+            // Gửi request đến server để dự đoán loại cây thuốc
+            fetch("http://localhost:8000/classify", {
+              // Thay 'http://localhost:8000' bằng địa chỉ thực tế của server API của bạn
+              mode: "cors",
+              method: "POST",
+              body: formData,
+            })
           .then((response) => response.json())
           .then((data) => {
             // Hiển thị kết quả dự đoán
@@ -147,6 +147,7 @@
             tbody.innerHTML += row;
           })
           .catch((error) => console.error("Error:", error));
+          };
       }
 
       // Hàm giả định để lấy thông tin công dụng dựa trên tên loại lá cây
